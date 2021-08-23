@@ -85,22 +85,30 @@ void MenuView::begin(){
 }
 
 
-void MenuView::update(LGFX_Sprite* view){
+/**
+ * @retval 0x0   : not changed
+ * @retval other : number of changes
+ */
+uint8_t MenuView::update(LGFX_Sprite* view){
+    uint8_t ret = 0;
     if(keyController.getKeyOperation(WIO_5S_SHORTUP)){
-        Serial.println("shortUp!!");
+        //Serial.println("shortUp!!");
         if(menu.selector.current_row > 0){
             menu.selector.request_row = menu.selector.current_row - 1;
             if(menu.yoffset < 0){
                 frview_scrolldown();
+                ret += 1;
             }
         }
     }else if(keyController.getKeyOperation(WIO_5S_LONGUP)){
         Serial.println("longUp!!");
     }else if(keyController.getKeyOperation(WIO_5S_SHORTDOWN)){
+        //Serial.println("shortDown!!");
         if(menu.selector.current_row < menu.menu_itemcnt -1){
             menu.selector.request_row = menu.selector.current_row + 1;
             if(menu.yoffset > ((menu.selector.request_row - 7) * (-20 - 2))){
                 frview_scrollup();
+                ret += 1;
             }
         }
     }else if(keyController.getKeyOperation(WIO_5S_LONGDOWN)){
@@ -136,6 +144,7 @@ void MenuView::update(LGFX_Sprite* view){
                 */
                 menu.selector.current_row = nitem;
                 reprintItem();
+                ret += 1;
             }else{
                 menu.selector.current_loc += SELECTOR_MOVESPD;
             }
@@ -161,6 +170,7 @@ void MenuView::update(LGFX_Sprite* view){
                 */
                 menu.selector.current_row = nitem;
                 reprintItem();
+                ret += 1;
             }else{
                 menu.selector.current_loc -= SELECTOR_MOVESPD;
             }
@@ -168,19 +178,22 @@ void MenuView::update(LGFX_Sprite* view){
             /* 元の選択位置の選択解除演出 */
             int diff = (2 + 20 * pitem) - menu.selector.current_loc;
             if(diff > 10){
+                /*  
                 frview.setTextColor(TFT_YELLOW);
-                frview.setCursor(5,2 + 20 * pitem);  /* 演出終了*/
+                frview.setCursor(5,2 + 20 * pitem);  // 演出終了
                 frview.print(menu.item[pitem].title);
+                */
             }
-        }else if(pitem != nitem){
+        }else if(pitem != nitem){   /* menu初期化時等に実行される */
                 frview.setTextColor(TFT_DARKGREY);
-                frview.setCursor(5,2 + 20 * nitem);  /* 演出終了*/
+                frview.setCursor(5,2 + 20 * nitem);  // 演出終了
                 frview.print(menu.item[nitem].title);
                 menu.selector.current_row = nitem;
         }
     }
 
     frview.pushSprite(view, 0,  0, TFT_BLACK);
+    return ret;
 }
 
 void MenuView::frview_scrollup(){

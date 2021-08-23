@@ -67,9 +67,11 @@ class MenuView{
 
         void begin();
 
-        void update(LGFX_Sprite*);
+        uint8_t update(LGFX_Sprite*);
 
         void setItem(const char *title ,void (*func)());
+
+        uint16_t getSelectedIdx(){ return menu.selector.current_row; };
 
         menuTree getMenuTree()
         {
