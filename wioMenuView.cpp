@@ -1,7 +1,7 @@
 #include "wioMenuView.hpp"
 
 MenuView::MenuView(){
-
+    menu.menu_itemcnt = 0;
 }
 
 /**
@@ -9,8 +9,6 @@ MenuView::MenuView(){
  * @param width[in]  width
 */
 void MenuView::init(int width, int height){
-    menu.menu_itemcnt = 0;
-
     bkview.setColorDepth(8);
     bkview.createSprite(width, 20);
     bkview.fillScreen(TFT_BLACK);
