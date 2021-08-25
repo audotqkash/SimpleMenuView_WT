@@ -1,9 +1,10 @@
 #include <Arduino.h>
 #include <LovyanGFX.hpp>
+#include <functional>
 #include "wioKeyOperation.hpp"
 
 #define MAXTITLECHARSIZE 40
-#define MAXMENUITEMCNT 100
+#define MAXMENUITEMCNT 10
 #define MAXVISIBLEITEMCNT 10
 #define SELECTOR_MOVESPD 15
 
@@ -27,11 +28,21 @@ struct menuSelector{
 };
 
 struct menuTree{
-    menuItem item[MAXMENUITEMCNT];
+    menuItem *item;
     int menu_itemcnt;
     menuSelector selector;
 
     int yoffset = 0;      /* kari */
+
+    menuTree()
+    {
+        item = (menuItem *)malloc(sizeof(menuItem) * MAXMENUITEMCNT);
+    }
+
+    menuTree(size_t maxitmcnt)
+    {
+        item = (menuItem *)malloc(sizeof(menuItem) * maxitmcnt);
+    }
 };
 
 
@@ -44,7 +55,8 @@ class MenuView{
         LGFX_Sprite frview;
         LGFX_Sprite bkview;
         menuTree menu;
-        
+        int view_width;
+        int view_height;
         
 
         void int_cursor_up(void);
@@ -66,6 +78,7 @@ class MenuView{
         void init(int, int);
 
         void begin();
+        void end();
 
         uint8_t update(LGFX_Sprite*);
 

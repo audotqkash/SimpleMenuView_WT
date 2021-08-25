@@ -51,13 +51,24 @@ class KeyOperation{
             pinMode(WIO_5S_LEFT,  INPUT_PULLUP);
             pinMode(WIO_5S_RIGHT, INPUT_PULLUP);
             //attachInterrupt(WIO_KEY_A, keyDown, FALLING); /*使用不可*/
-            attachInterrupt(WIO_KEY_B, keyDown, FALLING);
-            attachInterrupt(WIO_KEY_C, keyDown, FALLING);
+            attachInterrupt(WIO_KEY_B,    keyDown, FALLING);
+            attachInterrupt(WIO_KEY_C,    keyDown, FALLING);
             attachInterrupt(WIO_5S_PRESS, keyDown, FALLING);
             attachInterrupt(WIO_5S_UP,    keyDown, FALLING);
             attachInterrupt(WIO_5S_DOWN,  keyDown, FALLING);
             attachInterrupt(WIO_5S_LEFT,  keyDown, FALLING);
             attachInterrupt(WIO_5S_RIGHT, keyDown, FALLING);
+        }
+
+        void end()
+        {
+            detachInterrupt(WIO_KEY_B     );
+            detachInterrupt(WIO_KEY_C     );
+            detachInterrupt(WIO_5S_PRESS  );
+            detachInterrupt(WIO_5S_UP     );
+            detachInterrupt(WIO_5S_DOWN   );
+            detachInterrupt(WIO_5S_LEFT   );
+            detachInterrupt(WIO_5S_RIGHT  );
         }
 
         uint8_t getKeyOperation();

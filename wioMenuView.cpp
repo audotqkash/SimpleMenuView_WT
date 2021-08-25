@@ -10,17 +10,16 @@ MenuView::MenuView(){
 */
 void MenuView::init(int width, int height){
     bkview.setColorDepth(8);
-    bkview.createSprite(width, 20);
-    bkview.fillScreen(TFT_BLACK);
-    bkview.clear(TFT_SKYBLUE);
+    //bkview.createSprite(width, 20);
+    //bkview.fillScreen(TFT_BLACK);
+    //bkview.clear(TFT_SKYBLUE);
+    view_height = height;
+    view_width = width;
 
     frview.setColorDepth(8);
-    frview.createSprite(width, height);
-    bkview.fillScreen(TFT_BLACK);
+    //bkview.fillScreen(TFT_BLACK);
     frview.setFont(&fonts::Font2);
     frview.setTextColor(TFT_YELLOW);
-
-    keyController.begin();
 }
 
 void MenuView::int_cursor_up(void){
@@ -52,19 +51,21 @@ void MenuView::setItem(const char *title ,void (*func)()){
     menu.menu_itemcnt += 1;
 }
 
+
 void MenuView::printItem(uint8_t sidx){
     static uint8_t idx;
     if(sidx != UCHAR_MAX){
         idx = sidx;
     }
     frview.fillScreen(TFT_BLACK);
+    Serial.printf(" |- Item count : %d\n",  menu.menu_itemcnt);
     for(int i = idx; i < menu.menu_itemcnt; i++){
         frview.setCursor(5,2 + 20 * (i - idx));
         if(i == menu.selector.current_row){ frview.setTextColor(TFT_DARKGREY);}
         else                         { frview.setTextColor(TFT_YELLOW);}
 
         frview.print(menu.item[i].title);
-        //Serial.println(menu.item[i].title);
+        Serial.println(menu.item[i].title);
     }
 }
 
@@ -76,10 +77,20 @@ void MenuView::begin(){
     printItem(0);
     lastUpdateViewTm = millis();
     
-    menu.selector.init();                   /* uintの最大値 */
-    if(menu.menu_itemcnt > 0){              /* 選択可能アイテム有*/
-        menu.selector.request_row = 0;      /* 1番目を選択 */
+                                            /*セレクター初期化    */
+    menu.selector.init();                   /* uintの最大値      */
+    if(menu.menu_itemcnt > 0){              /* 選択可能アイテム有 */
+        menu.selector.request_row = 0;      /* 1番目を選択       */
     }
+
+    frview.createSprite(view_width, view_height);
+    keyController.begin();
+}
+
+void MenuView::end()
+{
+    keyController.end();
+    frview.deleteSprite();
 }
 
 
@@ -183,10 +194,12 @@ uint8_t MenuView::update(LGFX_Sprite* view){
                 */
             }
         }else if(pitem != nitem){   /* menu初期化時等に実行される */
-                frview.setTextColor(TFT_DARKGREY);
-                frview.setCursor(5,2 + 20 * nitem);  // 演出終了
-                frview.print(menu.item[nitem].title);
-                menu.selector.current_row = nitem;
+            menu.selector.current_row = nitem;
+            //frview.setTextColor(TFT_DARKGREY);
+            //frview.setCursor(5,2 + 20 * nitem);  // 演出終了
+            //frview.print(menu.item[nitem].title);
+            printItem(nitem);
+            ret += 1;
         }
     }
 
